@@ -34,18 +34,6 @@ feat = std(np.array(htk_reader.data))
 input = Variable(torch.from_numpy(feat.astype('float32'))) #.cuda()
 output_ling = net_ling(input).data.data.cpu().numpy()
 output_syll = net_syll(input).data.data.cpu().numpy()
-# print(output)
-
-# # Print the predictions in RTTM format
-# class_names = ['NONL', 'LING']
-# nClasses = len(class_names)
-# cls = np.argmax(output_ling)
-# print('\n>>> Predicted class: {}\n'.format(cls))
-#
-# key = os.path.splitext(os.path.basename(OUTPUT_FILE))[0]
-# with open(OUTPUT_FILE, 'w') as f:
-#     f.write('SPEAKER {} <NA> <NA> {} <NA> <NA>\n'.format(key, class_names[cls]))
-
 
 
 # Load input feature and predict
