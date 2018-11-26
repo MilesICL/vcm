@@ -15,7 +15,7 @@ INPUT=$1
 # CONFIG_FILE=/vagrant/MED_2s_100ms_htk.conf
 CONFIG_FILE=./config/gemaps/eGeMAPSv01a.conf
 OUTPUT_DIR=$dirname/VCMtemp/
-OPENSMILE=~/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract
+OPENSMILE=~/repos/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract
 
 mkdir -p $OUTPUT_DIR
 file=$INPUT
@@ -33,7 +33,7 @@ LD_LIBRARY_PATH=/home/vagrant/usr/local/lib \
     -C $CONFIG_FILE \
     -I $file \
     -htkoutput $OUTPUT_DIR/${id}.htk \
-    -logfile extract-htk.log  \
-     >& /dev/null
+    -logfile extract-htk.log  #\
+    # >& /dev/null
 
 echo "DONE!"

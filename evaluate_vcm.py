@@ -4,7 +4,8 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from Net import NetLing, NetSyll
-import _pickle as pickle
+# import _pickle as pickle
+import cPickle as pickle 
 from HTK import HTKFile
 import numpy as np
 
@@ -23,7 +24,8 @@ OUTPUT_FILE = sys.argv[2]       # RTTM file to write the results to
 
 # Load mean and variance for standadisation
 with open('ling.eGeMAPS.func_utt.meanvar', 'rb') as f:
-    mv = pickle.load(f, encoding='iso-8859-1')
+    # mv = pickle.load(f, encoding='iso-8859-1')
+    mv = pickle.load(f)
     m, v = mv['mean'], mv['var']
 std = lambda feat: (feat - m)/v
 

@@ -12,7 +12,7 @@ SCRIPT=$(readlink -f $0)
 # Absolute path this script is in. /home/user/bin
 BASEDIR=`dirname $SCRIPT`
 #| Path to VCM (go one folder up and to VCM)
-VCMDIR=$(dirname $BASEDIR)/vcm
+VCMDIR=/home/vagrant/repos/vcm
 
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <dirname>"
@@ -28,6 +28,12 @@ extension="${filename##*.}"
 basename="${filename%.*}"
 # Check audio_dir to see if empty or if contains empty wav
 bash $BASEDIR/check_folder.sh $audio_dir
+
+KEEPTEMP=false
+if [ $BASH_ARGV == "--keep-temp" ]; then
+    KEEPTEMP=true
+fi
+
 
 
 # this is set in user's login .bashrc
@@ -53,4 +59,6 @@ for vcm in `ls $audio_dir/VCMtemp/*.rttm`; do
 done
 
 # simply remove hyp and feature
-rm -rf $audio_dir/VCMtemp
+if ! $KEEPTEMP; then
+    rm -rf $audio_dir/VCMtemp
+fi
