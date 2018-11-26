@@ -26,15 +26,16 @@ fi
 
 # let's get our bearings: set CWD to path of this script
 cd $BASEDIR
+echo $BASEDIR
 
 # make output folder for features, below input folder
 mkdir -p $dirname/VCMtemp/
+
+
+echo $dirname/VCMtemp
 
 # first features
 ./extract-htk-vm2.sh $1
 
 # # then confidences
-python evaluate_vcm.py $dirname/VCMtemp/$basename.htk $dirname/VCMtemp/$basename.rttm_sorted
-
-
-
+python2 evaluate_vcm.py $dirname/VCMtemp/$basename.htk $dirname/VCMtemp/vcm_$basename.rttm
