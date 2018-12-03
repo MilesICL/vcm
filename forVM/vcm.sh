@@ -1,8 +1,4 @@
 #!/bin/bash
-# Since the script is built to be launched outside of the vm, source
-# the .bashrc which is not necessarily sourced!
-source ~/.bashrc
-conda_dir=/home/vagrant/anaconda/bin
 
 # run OpenSAT with hard coded models & configs found here and in /vagrant
 # assumes Python environment in /home/${user}/
@@ -33,11 +29,8 @@ KEEPTEMP=false
 if [ $BASH_ARGV == "--keep-temp" ]; then
     KEEPTEMP=true
 fi
-
-
-
-# this is set in user's login .bashrc
-#export PATH=/home/${user}/anaconda/bin:$PATH
+mkdir -p $audio_dir/VCMtemp
+echo $audio_dir/VCMtemp
 
 # let's get our bearings: set CWD to the path of VCM
 cd $VCMDIR
@@ -51,12 +44,6 @@ done
 
 echo "$0 finished running"
 
-# take all the .rttm in $audio_dir/VCMtemp/ and move them to /vagrant/data
-for vcm in `ls $audio_dir/VCMtemp/*.rttm`; do
-    _rttm=$(basename $vcm)
-    rttm=$audio_dir/${_rttm}
-    mv $vcm $rttm
-done
 
 # simply remove hyp and feature
 if ! $KEEPTEMP; then

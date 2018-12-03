@@ -22,7 +22,7 @@ def extract_feature(audio, feature):
     config = './config/gemaps/eGeMAPSv01a.conf'
     opensmile = '~/repos/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract'
     # opensmile = '~/tools/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract'
-    cmd = '{} -C {} -I {} -htkoutput {}'.format(opensmile, config, audio, feature)
+    cmd = '{} -C {} -I {} -htkoutput {} >& /dev/null'.format(opensmile, config, audio, feature)
     subprocess.call(cmd, shell=True)
 
 
@@ -62,7 +62,7 @@ def main(audio_file, yun_rttm_file, vcm_rttm_file, mean_var, vcm_model):
                 file, onset, dur, cls, conf = els[1], els[3], els[4], els[7], els[8]
                 if 'CHI' in els[7]:
                     audio_segment = '{}/{}_{}_{}.wav'.format(tmpdir, file.replace('.rttm', ''), onset, dur)
-                    print(audio_segment)
+                    # print(audio_segment)
                     feature_file = audio_segment.replace('wav', 'htk')
 
                     ### segment audio file into small subsegments according to the yunitator output

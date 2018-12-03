@@ -233,7 +233,6 @@ TESTDIR=$WORKDIR/vcm-test
 rm -rf $TESTDIR; mkdir -p $TESTDIR
 ln -fs $TEST_WAV $TESTDIR
 # let 'er rip
-#./runYunitator.sh $TESTDIR/$BASETEST.wav > $TESTDIR/yunitator-test.log 2>&1 || { echo "   Yunitator failed - dependencies"; FAILURES=true;}
 $LAUNCHERS/vcm.sh $DATADIR/vcm-test $KEEPTEMP > $TESTDIR/vcm-test.log 2>&1 || { echo "   VCM failed - dependencies"; FAILURES=true;}
 if [ -s $TESTDIR/vcm_$BASETEST.rttm ]; then
     echo "VCM passed the test."
