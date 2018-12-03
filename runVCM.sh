@@ -1,41 +1,44 @@
 #!/bin/bash
-# runDiarNoisemes.sh
 
-# run OpenSAT with hard coded models & configs found here and in /vagrant
-# assumes Python environment in /home/${user}/
-# usage: runDiarNoisemes.sh <folder containing .wav files to process>
-
-# Absolute path to this script. /home/user/bin/foo.sh
-SCRIPT=$(readlink -f $0)
-# Absolute path this script is in. /home/user/bin
-BASEDIR=`dirname $SCRIPT`
-
-
-filename=$(basename "$1")
-dirname=$(dirname "$1")
-extension="${filename##*.}"
-basename="${filename%.*}"
-
-# this is set in user's login .bashrc
-export PATH=/home/${USER}/anaconda/bin:$PATH
-
+# usage introduction 
 if [ $# -ne 1 ]; then
   echo "Usage: runVCM.sh <audiofile>"
   exit 1;
 fi
 
-# let's get our bearings: set CWD to path of this script
+# direction of scripts and set path 
+export PATH=/home/${USER}/anaconda/bin:$PATH
+SCRIPT=$(readlink -f $0)
+BASEDIR=`dirname $SCRIPT`
 cd $BASEDIR
 echo $BASEDIR
 
-# make output folder for features, below input folder
-mkdir -p $dirname/VCMtemp/
+# check results from Yunitator. If not, run Yunitator first to obtain yunitator_rttm_file
+audio_file=$1 
+bn=$(basename $audio_file)
+dn=$(dirname $audio_file)
+yunitator_rttm_file=$dn"/yunitator_"${bn//wav/rttm}  # yunicator output 
+if [ ! -e $yunitator_rttm_file ]; then 
+	echo "Error: Cannot find corresponding SAD outputs. Please run yunicatator first!"
+	exit 1; 
+fi 
+vcm_rttm_file=$dn"/vcm_"${bn//wav/rttm} # vcm output 
 
 
-echo $dirname/VCMtemp
+# # make output folder for features, below input folder
+# KEEPTEMP=false
+# if [ $BASH_ARGV == "--keep-temp" ]; then
+#     KEEPTEMP=true
+# fi
+# VCMTEMP=$dn/VCMtemp
+# mkdir -p $VCMTEMP
 
-# first features
-./extract-htk-vm2.sh $1
+# do vcm recognition 
+python2 ./vcm_evaluate.py ${audio_file} ${yunitator_rttm_file} ${vcm_rttm_file}
 
-# # then confidences
-python2 evaluate_vcm.py $dirname/VCMtemp/$basename.htk $dirname/VCMtemp/vcm_$basename.rttm
+# # simply remove segmented waves and acoustic features 
+# if ! $KEEPTEMP; then
+#     rm -rf $VCMTEMP
+# fi
+
+
