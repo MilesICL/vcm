@@ -1,9 +1,9 @@
 import sys, os, os.path
 import torch
 from torch.autograd import Variable
-from Net import NetLing, NetSyll
+from Net import NetVCM
 try:
-    import _picke as pickle
+    import _pickle as pickle
 except:
     import cPickle as pickle
 from HTK import HTKFile
@@ -14,6 +14,7 @@ import shutil
 
 
 def seg_audio(input_audio, output_audio, onset, duration):
+    assert os.path.isfile(input_audio)
     cmd_seg = 'sox ' + input_audio + " " + output_audio + ' trim ' + " " + onset + " " + duration
     subprocess.call(cmd_seg, shell=True)
 
@@ -22,7 +23,7 @@ def extract_feature(audio, feature):
     config = './config/gemaps/eGeMAPSv01a.conf'
     opensmile = '~/repos/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract'
     # opensmile = '~/tools/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract'
-    cmd = '{} -C {} -I {} -htkoutput {} >& /dev/null'.format(opensmile, config, audio, feature)
+    cmd = '{} -C {} -I {} -htkoutput {} '.format(opensmile, config, audio, feature) #>& /dev/null
     subprocess.call(cmd, shell=True)
 
 
@@ -42,7 +43,7 @@ def predict_vcm(model, input, mean_var):
     output_ling = model(input).data.data.cpu().numpy()
     prediction_confidence = output_ling.max()  # post propability
 
-    class_names_ling = ['NONL', 'LING']
+    class_names_ling = ['NCS', 'CNS', 'CRY', 'OTH']
     cls_ling = np.argmax(output_ling)
     predition_vcm = class_names_ling[cls_ling]  # prediction
 
@@ -75,6 +76,9 @@ def main(audio_file, yun_rttm_file, vcm_rttm_file, mean_var, vcm_model):
                     ### extract acoustic feature
                     try:
                         extract_feature(audio_segment, feature_file)
+                        if not os.path.isfile(feature_file):
+                            print("Error: {} is not generated!".format(feature_file))
+                            exit()
                     except:
                         print("Error: Cannot extract the acoustic features from: {}".format(audio_segment))
                         exit()
@@ -98,15 +102,15 @@ if __name__ == '__main__':
     # audio_file = '/data/work2/DiViMe/vcm/data/example.wav'
     # yun_rttm_file = '/data/work2/DiViMe/vcm/data/yunitator_example.rttm'
     vcm_rttm_file = yun_rttm_file.replace('yunitator', 'vcm') if len(sys.argv) < 4 else sys.argv[3]
-    mean_var = './ling.eGeMAPS.func_utt.meanvar'
+    mean_var = './vcm.eGeMAPS.func_utt.meanvar'
 
     ### models
-    net_ling = NetLing(88, 1024, 2)  # .cuda()
-    net_ling.load_state_dict(torch.load('modelLing.pt', map_location=lambda storage, loc: storage))
+    vcm_net = NetVCM(88, 1024, 4)  # .cuda()
+    vcm_net.load_state_dict(torch.load('vcm_model.pt', map_location=lambda storage, loc: storage))
     # net_syll = NetSyll(88, 1024, 2) #.cuda()
     # net_syll.load_state_dict(torch.load('modelSyll.pt', map_location = lambda storage, loc: storage))
-    vcm_model = net_ling
+    # vcm_model = vcm_net
 
-    main(audio_file, yun_rttm_file, vcm_rttm_file, mean_var, vcm_model)
+    main(audio_file, yun_rttm_file, vcm_rttm_file, mean_var, vcm_net)
 
 
