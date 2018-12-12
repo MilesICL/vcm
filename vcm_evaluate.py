@@ -23,7 +23,7 @@ def extract_feature(audio, feature):
     config = './config/gemaps/eGeMAPSv01a.conf'
     opensmile = '~/repos/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract'
     # opensmile = '~/tools/opensmile-2.3.0/bin/linux_x64_standalone_static/SMILExtract'
-    cmd = '{} -C {} -I {} -htkoutput {} '.format(opensmile, config, audio, feature) #>& /dev/null
+    cmd = '{} -C {} -I {} -htkoutput {} >& /dev/null'.format(opensmile, config, audio, feature) #>& /dev/null
     subprocess.call(cmd, shell=True)
 
 
