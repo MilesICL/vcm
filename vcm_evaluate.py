@@ -59,7 +59,7 @@ def main(audio_file, yun_rttm_file, vcm_rttm_file, mean_var, vcm_model):
         # process each segment one by one. If it is infant vocalisation, do vcm
         with open(yun_rttm_file, 'r') as yf:
             for line in yf.readlines():
-                els = line.split('\t')
+                els = line.split()
                 file, onset, dur, cls, conf = els[1], els[3], els[4], els[7], els[8]
                 if 'CHI' in els[7]:
                     audio_segment = '{}/{}_{}_{}.wav'.format(tmpdir, file.replace('.rttm', ''), onset, dur)
